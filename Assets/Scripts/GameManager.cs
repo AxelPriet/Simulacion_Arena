@@ -27,20 +27,19 @@ public class GameManager : MonoBehaviour
         InputManager.Instance.OnToggleCell += ToggleCellInput;
 
         GenerateGrid();
-       // RandomizeGrid();  Para creacion de celulas alatorias
     }
 
     void Update()
     {
         if (isPaused) return;
 
-        // Si se hace clic izquierdo: crear una célula (arena)
+        
         if (Mouse.current != null && Mouse.current.leftButton.isPressed)
         {
-            HandleMouseClick(); // genera arena al hacer clic
+            HandleMouseClick(); // Genera arena al dar click izquiero
         }
 
-        // Actualización automática de la física granular
+        // Revision de fisicas
         timer += Time.deltaTime;
         if (timer >= updateTime)
         {
@@ -59,14 +58,14 @@ public class GameManager : MonoBehaviour
 
     void ToggleCellInput()
     {
-        // Si hay mouse disponible (PC), usar clic real
+        
         if (Mouse.current != null && Mouse.current.delta.ReadValue() != Vector2.zero)
         {
             HandleMouseClick();
             return;
         }
 
-        // Si no hay mouse, usar el centro de la cámara
+        
         Vector3 camPos = Camera.main.transform.position;
         int x = Mathf.RoundToInt(camPos.x);
         int y = Mathf.RoundToInt(camPos.y);
@@ -137,24 +136,24 @@ public class GameManager : MonoBehaviour
             for (int y = 0; y < height; y++)
                 nextGrid[x, y] = false;
 
-        // 🔹 Recorremos de arriba hacia abajo (para evitar bucles visuales)
+        // Revision de arriba hacia abajo
         for (int y = height - 1; y >= 0; y--)
         {
             for (int x = 0; x < width; x++)
             {
-                if (!grid[x, y]) continue; // si no hay célula, saltar
+                if (!grid[x, y]) continue; 
 
                 int newX = x;
                 int newY = y;
 
-                // Si puede caer directamente abajo
+                
                 if (y > 0 && !grid[x, y - 1])
                 {
                     newY = y - 1;
                 }
                 else
                 {
-                    // Si abajo está ocupado, intenta moverse a los lados
+                   
                     bool canLeft = x > 0 && y > 0 && !grid[x - 1, y - 1];
                     bool canRight = x < width - 1 && y > 0 && !grid[x + 1, y - 1];
 
@@ -175,13 +174,13 @@ public class GameManager : MonoBehaviour
                     }
                 }
 
-                // Mueve la célula a la nueva posición
+               
                 if (newX >= 0 && newX < width && newY >= 0 && newY < height)
                     nextGrid[newX, newY] = true;
             }
         }
 
-        // Intercambiar grillas
+        
         var temp = grid;
         grid = nextGrid;
         nextGrid = temp;
@@ -219,7 +218,7 @@ public class GameManager : MonoBehaviour
         if (x < 0 || x >= width || y < 0 || y >= height)
             return;
 
-        // Solo crea arena si no hay una célula ya existente
+        
         if (!grid[x, y])
         {
             grid[x, y] = true;
